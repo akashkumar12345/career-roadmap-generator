@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const roadmapRoutes = require("./routes/roadmapRotes");
 
 require("dotenv").config();
 
@@ -11,6 +12,9 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use("/api/roadmap", roadmapRoutes);
 
 app.get("/", (req, res) => {
   res.send("Career Roadmap API Running...");
