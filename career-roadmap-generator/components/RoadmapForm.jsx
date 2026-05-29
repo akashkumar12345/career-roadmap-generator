@@ -9,16 +9,58 @@ export default function RoadmapForm() {
   const [roadmap, setRoadmap] = useState([]);
 
   const generateRoadmap = () => {
-    const dummyRoadmap = [
-      "Learn HTML & CSS",
-      "Learn JavaScript",
-      "Learn React",
-      "Learn Next.js",
-      "Build Projects",
-      "Learn Deployment",
-    ];
+    if (!targetRole || !experienceLevel) {
+      alert("Please fill all required fields");
+      return;
+    }
 
-    setRoadmap(dummyRoadmap);
+    const role = targetRole.toLowerCase().trim();
+
+    let roadmapData = [];
+
+    if (role === "frontend developer") {
+      roadmapData = [
+        "Learn HTML",
+        "Learn CSS",
+        "Learn JavaScript",
+        "Learn React",
+        "Learn Next.js",
+        "Build Frontend Projects",
+        "Learn Deployment",
+      ];
+    } else if (role === "backend developer") {
+      roadmapData = [
+        "Learn JavaScript",
+        "Learn Node.js",
+        "Learn Express.js",
+        "Learn MongoDB",
+        "Build REST APIs",
+        "Learn Authentication & JWT",
+        "Deploy Backend Projects",
+      ];
+    } else if (role === "full stack developer") {
+      roadmapData = [
+        "Learn HTML & CSS",
+        "Learn JavaScript",
+        "Learn React",
+        "Learn Next.js",
+        "Learn Node.js",
+        "Learn Express.js",
+        "Learn MongoDB",
+        "Build Full Stack Projects",
+        "Deploy Applications",
+      ];
+    } else {
+      roadmapData = [
+        "Learn Programming Fundamentals",
+        "Choose a Technology Stack",
+        "Build Projects",
+        "Create Portfolio",
+        "Apply for Jobs",
+      ];
+    }
+
+    setRoadmap(roadmapData);
   };
 
   return (
@@ -74,21 +116,6 @@ export default function RoadmapForm() {
             <option value="Intermediate">Intermediate</option>
             <option value="Advanced">Advanced</option>
           </select>
-        </div>
-
-        {/* Debug Values */}
-        <div className="bg-gray-100 rounded-lg p-4">
-          <p>
-            <strong>Target Role:</strong> {targetRole}
-          </p>
-
-          <p>
-            <strong>Current Skills:</strong> {currentSkills}
-          </p>
-
-          <p>
-            <strong>Experience Level:</strong> {experienceLevel}
-          </p>
         </div>
 
         {/* Generate Button */}
