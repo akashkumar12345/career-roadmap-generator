@@ -1,66 +1,41 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 export default function RoadmapForm() {
   const [targetRole, setTargetRole] = useState("");
   const [currentSkills, setCurrentSkills] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
   const [roadmap, setRoadmap] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const generateRoadmap = () => {
+  const generateRoadmap = async () => {
     if (!targetRole || !experienceLevel) {
       alert("Please fill all required fields");
       return;
     }
 
-    const role = targetRole.toLowerCase().trim();
+    try {
+      setLoading(true);
 
-    let roadmapData = [];
+      const response = await axios.post(
+        "http://localhost:5000/api/roadmap/generate",
+        {
+          targetRole,
+          currentSkills,
+          experienceLevel,
+        }
+      );
 
-    if (role === "frontend developer") {
-      roadmapData = [
-        "Learn HTML",
-        "Learn CSS",
-        "Learn JavaScript",
-        "Learn React",
-        "Learn Next.js",
-        "Build Frontend Projects",
-        "Learn Deployment",
-      ];
-    } else if (role === "backend developer") {
-      roadmapData = [
-        "Learn JavaScript",
-        "Learn Node.js",
-        "Learn Express.js",
-        "Learn MongoDB",
-        "Build REST APIs",
-        "Learn Authentication & JWT",
-        "Deploy Backend Projects",
-      ];
-    } else if (role === "full stack developer") {
-      roadmapData = [
-        "Learn HTML & CSS",
-        "Learn JavaScript",
-        "Learn React",
-        "Learn Next.js",
-        "Learn Node.js",
-        "Learn Express.js",
-        "Learn MongoDB",
-        "Build Full Stack Projects",
-        "Deploy Applications",
-      ];
-    } else {
-      roadmapData = [
-        "Learn Programming Fundamentals",
-        "Choose a Technology Stack",
-        "Build Projects",
-        "Create Portfolio",
-        "Apply for Jobs",
-      ];
+      setRoadmap(response.data.data.roadmap);
+    } catch (error) {
+      console.error(error);
+
+      alert("Failed to generate roadmap");
+    } finally {
+      setLoading(false);
     }
-
-    setRoadmap(roadmapData);
   };
 
   return (
@@ -121,9 +96,10 @@ export default function RoadmapForm() {
         {/* Generate Button */}
         <button
           onClick={generateRoadmap}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 rounded-lg transition duration-200"
         >
-          Generate Roadmap
+          {loading ? "Generating..." : "Generate Roadmap"}
         </button>
 
         {/* Generated Roadmap */}
