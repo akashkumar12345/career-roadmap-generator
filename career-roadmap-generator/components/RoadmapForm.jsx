@@ -3,6 +3,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function RoadmapForm() {
   const [targetRole, setTargetRole] = useState("");
   const [currentSkills, setCurrentSkills] = useState("");
@@ -20,7 +22,7 @@ export default function RoadmapForm() {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:5000/api/roadmap/generate",
+        `${API_URL}/api/roadmap/generate`,
         {
           targetRole,
           currentSkills,
@@ -30,8 +32,7 @@ export default function RoadmapForm() {
 
       setRoadmap(response.data.data.roadmap);
     } catch (error) {
-      console.error(error);
-
+      console.error("Generate Error:", error);
       alert("Failed to generate roadmap");
     } finally {
       setLoading(false);

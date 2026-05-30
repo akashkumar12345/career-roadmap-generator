@@ -3,35 +3,46 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function HistoryPage() {
   const [roadmaps, setRoadmaps] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch All Roadmaps
   const fetchRoadmaps = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/roadmap/roadmaps"
+        `${API_URL}/api/roadmap/roadmaps`
       );
 
       setRoadmaps(response.data.data);
     } catch (error) {
-      console.error(error);
+      console.error("Fetch Error:", error);
+      alert("Failed to fetch roadmaps");
     } finally {
       setLoading(false);
     }
   };
 
+  // Delete Roadmap
   const deleteRoadmap = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this roadmap?"
+    );
+
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(
-        `http://localhost:5000/api/roadmap/${id}`
+        `${API_URL}/api/roadmap/${id}`
       );
 
       setRoadmaps((prev) =>
         prev.filter((item) => item._id !== id)
       );
     } catch (error) {
-      console.error(error);
+      console.error("Delete Error:", error);
       alert("Failed to delete roadmap");
     }
   };
@@ -42,8 +53,10 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div className="text-center mt-10 text-xl">
-        Loading...
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <h2 className="text-2xl font-semibold">
+          Loading Roadmaps...
+        </h2>
       </div>
     );
   }
@@ -56,28 +69,36 @@ export default function HistoryPage() {
 
       {roadmaps.length === 0 ? (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
-          No Roadmaps Found
+          <h2 className="text-xl font-semibold">
+            No Roadmaps Found
+          </h2>
+
+          <p className="text-gray-500 mt-2">
+            Generate your first roadmap.
+          </p>
         </div>
       ) : (
         roadmaps.map((item) => (
           <div
             key={item._id}
-            className="bg-white shadow-md rounded-lg p-5 mb-4"
+            className="bg-white shadow-md rounded-lg p-5 mb-5 border"
           >
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-2xl font-semibold text-blue-600">
               {item.targetRole}
             </h2>
 
             <p className="text-gray-600 mt-2">
-              Skills: {item.currentSkills}
+              <strong>Skills:</strong>{" "}
+              {item.currentSkills}
             </p>
 
             <p className="text-gray-600">
-              Experience: {item.experienceLevel}
+              <strong>Experience:</strong>{" "}
+              {item.experienceLevel}
             </p>
 
             <p className="text-gray-500 mt-2">
-              Created:{" "}
+              <strong>Created:</strong>{" "}
               {new Date(
                 item.createdAt
               ).toLocaleDateString()}
@@ -88,19 +109,26 @@ export default function HistoryPage() {
                 Roadmap Steps:
               </h3>
 
-              <ul className="list-disc pl-5">
-                {item.roadmap.map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
+              <ul className="list-disc pl-6 space-y-1">
+                {item.roadmap?.map(
+                  (step, index) => (
+                    <li
+                      key={index}
+                      className="text-gray-700"
+                    >
+                      {step}
+                    </li>
+                  )
+                )}
               </ul>
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-5">
               <button
                 onClick={() =>
                   deleteRoadmap(item._id)
                 }
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
               >
                 Delete
               </button>
