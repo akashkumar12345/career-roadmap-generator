@@ -10,14 +10,28 @@ const app = express();
 // Connect Database
 connectDB();
 
-app.use(cors());
+// CORS
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://your-vercel-app.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Routes
 app.use("/api/roadmap", roadmapRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Career Roadmap API Running...");
+  res.status(200).json({
+    success: true,
+    message: "Career Roadmap API Running...",
+  });
 });
 
 const PORT = process.env.PORT || 5000;
